@@ -10,6 +10,9 @@ import com.intellij.ui.components.panels.HorizontalLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 public class GenerateTopDownAction extends AnAction {
 
@@ -33,6 +36,14 @@ public class GenerateTopDownAction extends AnAction {
             dialogBuilder.show();
         } else {
             taskInterpreter = new TaskInterpreter(new ChatGptCommunicationService(instance.openAiToken));
+            try {
+                try (InputStream resourceAsStream = getClass().getResourceAsStream("/Tasks.yaml")) {
+                    assert resourceAsStream != null;
+                    taskInterpreter.start(new String(resourceAsStream.readAllBytes()));
+                }
+            } catch (IOException | InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }
