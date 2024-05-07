@@ -25,4 +25,12 @@
                           relative-to-action="Maven.ProjectViewDependencyAnalyzer"/>
         </action>
     </actions>
+
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable parentId="tools" instance="com.github.appreciated.llm_project_quickstart_plugin.AppSettingsConfigurable"
+                                 id="org.intellij.sdk.settings.AppSettingsConfigurable"
+                                 displayName="LLM Quick Start"/>
+        <applicationService serviceImplementation="com.github.appreciated.llm_project_quickstart_plugin.AppSettingsState"/>
+    </extensions>
 </idea-plugin>

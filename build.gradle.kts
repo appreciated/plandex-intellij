@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm") version "1.9.22"
     id("org.jetbrains.intellij") version "1.17.2"
 }
@@ -9,6 +10,11 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation("com.github.appreciated:programming-helper:1.0-SNAPSHOT")
 }
 
 // Configure Gradle IntelliJ Plugin
