@@ -4,15 +4,14 @@ import com.github.appreciated.interpreter.TaskInterpreter;
 import com.github.appreciated.llm.ChatGptCommunicationService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.ui.DialogBuilder;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.components.panels.HorizontalLayout;
+import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 public class GenerateTopDownAction extends AnAction {
 
@@ -39,7 +38,8 @@ public class GenerateTopDownAction extends AnAction {
             try {
                 try (InputStream resourceAsStream = getClass().getResourceAsStream("/Tasks.yaml")) {
                     assert resourceAsStream != null;
-                    taskInterpreter.start(new String(resourceAsStream.readAllBytes()));
+                    final VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
+                    taskInterpreter.start(new String(resourceAsStream.readAllBytes()), virtualFile.toNioPath());
                 }
             } catch (IOException | InterruptedException ex) {
                 throw new RuntimeException(ex);
