@@ -5,7 +5,6 @@ import com.github.appreciated.llm.ChatGptCommunicationService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -21,6 +20,7 @@ import java.nio.file.Path;
 
 public class GenerateTopDownAction extends AnAction {
 
+    private Thread thread;
     private TaskInterpreter taskInterpreter;
 
     public GenerateTopDownAction() {
@@ -47,20 +47,51 @@ public class GenerateTopDownAction extends AnAction {
                     final VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
                     Path nioPath = virtualFile.toNioPath();
                     String yamlInput = new String(resourceAsStream.readAllBytes());
-                    ProgressManager.getInstance().run(new Task.Backgroundable(e.getProject(), "Generating source code ...", true) {
-                        @Override
-                        public void run(@NotNull ProgressIndicator indicator) {
-                            try {
-                                taskInterpreter.start(yamlInput, nioPath);
-                            } catch (IOException | InterruptedException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                        }
-                    });
+                    startTasks(e, yamlInput, nioPath);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+
+    private void startTasks(AnActionEvent e, String yamlInput, Path nioPath) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(e.getProject(), "Generate Top Down", true) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                indicator.setIndeterminate(false);
+                indicator.setFraction(0.1);
+                thread = new Thread(() -> {
+                    try {
+                        taskInterpreter.start(yamlInput, nioPath, (s, s2, aFloat) -> {
+                            indicator.setText(s);
+                            indicator.setText2(s2);
+                            indicator.setFraction(aFloat);
+                        });
+                        indicator.setFraction(1.0);
+                    } catch (IOException | InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+                thread.start();
+                while (thread.isAlive()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    indicator.checkCanceled();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                if (thread != null) {
+                    thread.interrupt();
+                }
+            }
+        });
     }
 }
