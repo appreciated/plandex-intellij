@@ -6,8 +6,12 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,14 +47,16 @@ public class GenerateTopDownAction extends AnAction {
                     final VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
                     Path nioPath = virtualFile.toNioPath();
                     String yamlInput = new String(resourceAsStream.readAllBytes());
-                    ApplicationManager.getApplication()
-                            .executeOnPooledThread(() -> {
-                                try {
-                                    taskInterpreter.start(yamlInput, nioPath);
-                                } catch (IOException | InterruptedException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
+                    ProgressManager.getInstance().run(new Task.Backgroundable(e.getProject(), "Generating source code ...", true) {
+                        @Override
+                        public void run(@NotNull ProgressIndicator indicator) {
+                            try {
+                                taskInterpreter.start(yamlInput, nioPath);
+                            } catch (IOException | InterruptedException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                    });
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
