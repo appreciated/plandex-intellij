@@ -1,6 +1,5 @@
 package com.github.appreciated.llm_project_quickstart_plugin;
 
-import com.github.appreciated.interpreter.TaskInterpreter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPasswordField;
 import com.intellij.util.ui.FormBuilder;

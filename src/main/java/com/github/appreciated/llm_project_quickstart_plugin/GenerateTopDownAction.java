@@ -1,7 +1,8 @@
 package com.github.appreciated.llm_project_quickstart_plugin;
 
-import com.github.appreciated.interpreter.TaskInterpreter;
-import com.github.appreciated.llm.ChatGptCommunicationService;
+
+import com.github.appreciated.llm_task_definition_executor_core.interpreter.TaskInterpreter;
+import com.github.appreciated.llm_task_definition_executor_core.llm.ChatGptCommunicationService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
