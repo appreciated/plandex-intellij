@@ -72,6 +72,8 @@ public class GenerateTopDownAction extends AnAction {
                             indicator.setText(s);
                             indicator.setText2(s2);
                             indicator.setFraction(aFloat);
+                        }, stringStringMap -> {
+                            //TODO Add review dialog
                         });
                         indicator.setFraction(1.0);
                     } catch (IOException | InterruptedException ex) {
