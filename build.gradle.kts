@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.appreciated:llm-task-executor:1.0-SNAPSHOT")
+    implementation("com.github.appreciated:llm-task-definition-executor-core:1.0-SNAPSHOT")
 }
 
 // Configure Gradle IntelliJ Plugin

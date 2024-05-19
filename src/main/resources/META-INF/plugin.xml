@@ -5,7 +5,7 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>AI-Project-Quickstart</name>
+    <name>LLM-Project-Quickstart</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="goebeljohannes@gmx.net" url="https://github.com/appreciated/llm-project-quickstart-plugin">appreciated</vendor>
@@ -13,24 +13,35 @@
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description>Enter short description for your plugin here.</description>
+    <description>
+        By leveraging the capabilities of Large Language Models (LLMs) through the OpenAI API, this tool facilitates the
+        generation of boilerplate code, project setup, and other repetitive tasks, enhancing your development workflow.
+        With features like automated execution, file generation, and dynamic task management, it streamlines the
+        development process, making it efficient and scalable. The plugin's intuitive interface allows you to configure
+        and manage tasks with ease, directly from your IDE.
+    </description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <action id="test" class="com.github.appreciated.llm_project_quickstart_plugin.GenerateTopDownAction" text="Generate Top Down" icon="com.github.appreciated.llm_project_quickstart_plugin.Icons.GenerateIcon">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
-                          relative-to-action="Maven.ProjectViewDependencyAnalyzer"/>
-        </action>
-    </actions>
+        <!-- Define the new group and add it to ProjectViewPopupMenu -->
+        <group id="ProjectContextActions" text="Project specific actions" description="Project specific actions">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </group>
 
+        <!-- Define the action and add it to the new group -->
+        <action id="test" class="com.github.appreciated.llm_project_quickstart_plugin.GenerateTopDownAction" text="Generate Top Down" icon="com.github.appreciated.llm_project_quickstart_plugin.Icons.GenerateIcon">
+            <add-to-group group-id="ProjectContextActions" anchor="first"/>
+        </action>
+
+    </actions>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable parentId="tools" instance="com.github.appreciated.llm_project_quickstart_plugin.AppSettingsConfigurable"
                                  id="org.intellij.sdk.settings.AppSettingsConfigurable"
-                                 displayName="LLM Quick Start"/>
+                                 displayName="LLM Project Quickstart"/>
         <applicationService serviceImplementation="com.github.appreciated.llm_project_quickstart_plugin.AppSettingsState"/>
     </extensions>
 </idea-plugin>

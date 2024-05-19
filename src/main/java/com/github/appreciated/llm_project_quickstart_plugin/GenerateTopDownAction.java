@@ -30,15 +30,7 @@ public class GenerateTopDownAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         AppSettingsState instance = AppSettingsState.getInstance();
         if (instance.openAiToken == null || instance.openAiToken.isEmpty()) {
-            DialogBuilder dialogBuilder = new DialogBuilder(e.getProject());
-            dialogBuilder.setTitle("Missing Open AI API Token");
-            JPanel dialogPanel = new JPanel(new BorderLayout());
-            JLabel label = new JLabel("Please add a Open AI API Token under Settings/Tools/LLM Quick Start");
-            label.setPreferredSize(new Dimension(130, 45));
-            dialogPanel.add(label, BorderLayout.CENTER);
-            dialogBuilder.setCenterPanel(dialogPanel);
-            dialogBuilder.setOkActionEnabled(false);
-            dialogBuilder.show();
+            showMissingOpenAiApiKey(e);
         } else {
             taskInterpreter = new TaskInterpreter(new ChatGptCommunicationService(instance.openAiToken));
             try {
@@ -55,6 +47,17 @@ public class GenerateTopDownAction extends AnAction {
         }
     }
 
+    private static void showMissingOpenAiApiKey(AnActionEvent e) {
+        DialogBuilder dialogBuilder = new DialogBuilder(e.getProject());
+        dialogBuilder.setTitle("Missing Open AI API Token");
+        JPanel dialogPanel = new JPanel(new BorderLayout());
+        JLabel label = new JLabel("Please add a Open AI API Token under Settings/Tools/LLM Quick Start");
+        label.setPreferredSize(new Dimension(130, 45));
+        dialogPanel.add(label, BorderLayout.CENTER);
+        dialogBuilder.setCenterPanel(dialogPanel);
+        dialogBuilder.setOkActionEnabled(false);
+        dialogBuilder.show();
+    }
 
     private void startTasks(AnActionEvent e, String yamlInput, Path nioPath) {
         ProgressManager.getInstance().run(new Task.Backgroundable(e.getProject(), "Generate Top Down", true) {
@@ -77,7 +80,7 @@ public class GenerateTopDownAction extends AnAction {
                 thread.start();
                 while (thread.isAlive()) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
