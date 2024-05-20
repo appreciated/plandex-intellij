@@ -1,25 +1,23 @@
 tasks:
   - title: Create a module architecture documentation
-    llmInputType: direct
+    llmInputType: generateArtifact
     fileInputUserMessages:
       - pom.xml
-      - datamodel.txt
+      - data-model.txt
       - api-definition.txt
     userMessages:
-      - Analyze 'pom.xml', 'datamodel.txt', 'api-definition.txt'
       - Generate a module architecture as markdown
     artifact: planned-architecture.md
-    skipIfArtifactExists: true
   - title: Create a class list documentation
-    llmInputType: direct
+    llmInputType: generateArtifact
     fileInputUserMessages:
       - pom.xml
-      - datamodel.txt
+      - data-model.txt
       - api-definition.txt
       - planned-architecture.md
       - src-examples/*.java
     userMessages:
-      - Generate a very specific list of classes needed based on 'pom.xml', 'datamodel.txt', 'api-definition.txt', 'planned-architecture.md' including file suffix a documentation of the roles, package names based on the artifact id in the pom, the destination path in the source folder, relations to other classes, required methods their purpose
+      - Generate a very specific list of classes needed based on the provided input including file suffix a documentation of the class roles, packages based on the artifact id in the pom, the destination path in the source folder, relations to other classes, a list of the required methods, document the purpose for each method
     outputFormatUserMessages:
       - |-
         classes:
@@ -36,9 +34,8 @@ tasks:
           - name: TestClass2.java
           ...
     artifact: planned-classes.yaml
-    skipIfArtifactExists: true
   - title: Class Generation
-    llmInputType: forEachYamlListItem
+    llmInputType: generateArtifactsForEachYamlListItem
     fileInputUserMessages:
       - pom.xml
       - src-examples/*.java
@@ -53,30 +50,18 @@ tasks:
           - use the code examples under 'src-examples/'
           - implements all methods 
           - add the related documentation
-    artifactPattern: src/main/java/**/.java
+    artifactPattern: src/main/java/**/*.java
   - title: Check classes for missing implementations or other issues
-    llmInputType: forEachFile
+    llmInputType: generateYamlListByForEachArtifactCheck
     forEachFileInputPattern:
-      - src/main/java/**/.java
+      - src/main/java/**/*.java
     userMessages:
-      - Do not use the 'compile' command during this task
       - |-
         - Analyze the given class:
           - Look for imports not matching the technology stack
           - Look for missing method implementations (f.e. comments like '// Implementation here ...')
-      - If the class has issues response with `class-has-issue`
-    listArtifact: classes-with-issues.yml
-    listArtifactMatchKeyword: class-has-issue
-  - title: Class compilation
-    llmInputType: direct
-    userMessages:
-      - Compile the classes using the appropriate compile command and review the output for errors.
-      - Address and fix any errors or issues identified during the compilation process.
-      - To see the next task run the command 'finish-current-tasks'
-  - title: Integration and Testing
-    llmInputType: direct
-    userMessages:
-      - Integrate the classes and conduct thorough testing to ensure component interoperability.
-      - Utilize compilation services to verify system readiness and troubleshoot any arising issues.
-      - Confirm that all components are compatible with the dependencies and plugins specified in 'pom.xml'.
-      - To see the next task run the command 'finish-current-tasks'
+      - If the class has no issues respond with `class-has-no-issues`
+    listArtifact: classes-with-issues.yaml
+    listArtifactNegativeMatchKeyword: class-has-no-issues
+    yamlListItemsKey: classes
+    yamlListItemPathKey: path

@@ -2,6 +2,7 @@ package com.github.appreciated.llm_project_quickstart_plugin;
 
 
 import com.github.appreciated.llm_task_definition_executor_core.interpreter.TaskInterpreter;
+import com.github.appreciated.llm_task_definition_executor_core.interpreter.TaskReviewResult;
 import com.github.appreciated.llm_task_definition_executor_core.llm.ChatGptCommunicationService;
 import com.github.appreciated.llm_task_definition_executor_core.yaml.TasksYamlParser;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -10,15 +11,18 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import static com.github.appreciated.llm_project_quickstart_plugin.Dialogs.showFilesToBeReviewedDialog;
+import static com.github.appreciated.llm_project_quickstart_plugin.Dialogs.showMissingOpenAiApiKey;
 
 public class GenerateTopDownAction extends AnAction {
 
@@ -49,18 +53,6 @@ public class GenerateTopDownAction extends AnAction {
         }
     }
 
-    private static void showMissingOpenAiApiKey(AnActionEvent e) {
-        DialogBuilder dialogBuilder = new DialogBuilder(e.getProject());
-        dialogBuilder.setTitle("Missing Open AI API Token");
-        JPanel dialogPanel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel("Please add a Open AI API Token under Settings/Tools/LLM Quick Start");
-        label.setPreferredSize(new Dimension(130, 45));
-        dialogPanel.add(label, BorderLayout.CENTER);
-        dialogBuilder.setCenterPanel(dialogPanel);
-        dialogBuilder.setOkActionEnabled(false);
-        dialogBuilder.show();
-    }
-
     private void startTasks(AnActionEvent e, String yamlInput, Path nioPath) {
         ProgressManager.getInstance().run(new Task.Backgroundable(e.getProject(), "Generate Top Down", true) {
             @Override
@@ -73,8 +65,13 @@ public class GenerateTopDownAction extends AnAction {
                             indicator.setText(s);
                             indicator.setText2(s2);
                             indicator.setFraction(aFloat);
-                        }, stringStringMap -> {
-                            //TODO Add review dialog
+                        }, (Map<String, String> filesAndContentToBeReviewedMap) -> {
+                            try {
+                                CompletableFuture.runAsync(() -> showFilesToBeReviewedDialog(filesAndContentToBeReviewedMap)).get();
+                            } catch (InterruptedException | ExecutionException ex) {
+                                return TaskReviewResult.FAILED;
+                            }
+                            return TaskReviewResult.SUCCESS;
                         });
                         indicator.setFraction(1.0);
                     } catch (IOException | InterruptedException ex) {
