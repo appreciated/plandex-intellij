@@ -3,6 +3,7 @@ package com.github.appreciated.llm_project_quickstart_plugin;
 
 import com.github.appreciated.llm_task_definition_executor_core.interpreter.TaskInterpreter;
 import com.github.appreciated.llm_task_definition_executor_core.llm.ChatGptCommunicationService;
+import com.github.appreciated.llm_task_definition_executor_core.yaml.TasksYamlParser;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -68,7 +69,7 @@ public class GenerateTopDownAction extends AnAction {
                 indicator.setFraction(0.1);
                 thread = new Thread(() -> {
                     try {
-                        taskInterpreter.start(yamlInput, nioPath, (s, s2, aFloat) -> {
+                        taskInterpreter.start(TasksYamlParser.parseTasksConfigurationFileString(yamlInput), nioPath, (s, s2, aFloat) -> {
                             indicator.setText(s);
                             indicator.setText2(s2);
                             indicator.setFraction(aFloat);
