@@ -1,8 +1,8 @@
 package com.github.appreciated.llm_project_quickstart_plugin;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
-import com.intellij.openapi.ui.DialogWrapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,29 +21,8 @@ public class Dialogs {
         dialogBuilder.show();
     }
 
+    // Methode zur Anzeige des Dialogs
     public static void showFilesToBeReviewedDialog(Map<String, String> filesAndContentToBeReviewedMap) {
-        DialogWrapper dialogWrapper = new DialogWrapper(true) {
-            {
-                setTitle("Files to be Reviewed");
-                init();
-            }
-
-            @Override
-            protected JComponent createCenterPanel() {
-                JPanel panel = new JPanel(new BorderLayout());
-                JTextArea textArea = new JTextArea();
-                textArea.setEditable(false);
-
-                StringBuilder content = new StringBuilder();
-                filesAndContentToBeReviewedMap.forEach((fileName, fileContent) -> content.append("File: ").append(fileName).append("\n")
-                        .append("Content: ").append(fileContent).append("\n\n"));
-
-                textArea.setText(content.toString());
-                panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
-                return panel;
-            }
-        };
-
-        dialogWrapper.showAndGet();
+        new FileReviewDialog(filesAndContentToBeReviewedMap).showAndGet();
     }
 }

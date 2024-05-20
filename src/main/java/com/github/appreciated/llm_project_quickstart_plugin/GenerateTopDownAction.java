@@ -35,6 +35,10 @@ public class GenerateTopDownAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         AppSettingsState instance = AppSettingsState.getInstance();
+        if (true){
+            showFilesToBeReviewedDialog(Map.of("src\\main\\java\\com\\example\\Main.java", "Test\nTest"));
+            return;
+        }
         if (instance.openAiToken == null || instance.openAiToken.isEmpty()) {
             showMissingOpenAiApiKey(e);
         } else {
