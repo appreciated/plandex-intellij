@@ -1,20 +1,13 @@
-package com.github.appreciated.llm_project_quickstart_plugin;
+package com.github.appreciated.plandex_plugin;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.impl.EditorFactoryImpl;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DetailsComponent;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +15,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
 import java.util.Map;
 
 public class FileReviewDialog extends DialogWrapper {

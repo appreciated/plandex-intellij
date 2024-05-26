@@ -1,4 +1,4 @@
-package com.github.appreciated.llm_project_quickstart_plugin;
+package com.github.appreciated.plandex_plugin;
 
 import com.intellij.openapi.options.Configurable;
 import org.jetbrains.annotations.Nls;
@@ -19,7 +19,7 @@ final class AppSettingsConfigurable implements Configurable {
   @Nls(capitalization = Nls.Capitalization.Title)
   @Override
   public String getDisplayName() {
-    return "Open AI Api Key";
+    return "OpenAI Api Key";
   }
 
   @Override

@@ -13,10 +13,6 @@ repositories {
     mavenLocal()
 }
 
-dependencies {
-    implementation("com.github.appreciated:llm-task-definition-executor-core:1.0-SNAPSHOT")
-}
-
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {

@@ -1,7 +1,6 @@
-package com.github.appreciated.llm_project_quickstart_plugin;
+package com.github.appreciated.plandex_plugin;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 
 import javax.swing.*;
@@ -13,7 +12,7 @@ public class Dialogs {
         DialogBuilder dialogBuilder = new DialogBuilder(e.getProject());
         dialogBuilder.setTitle("Missing Open AI API Token");
         JPanel dialogPanel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel("Please add a Open AI API Token under Settings/Tools/LLM Quick Start");
+        JLabel label = new JLabel("Please add a Open AI API Token under Settings/Tools/Plandex Plugin");
         label.setPreferredSize(new Dimension(130, 45));
         dialogPanel.add(label, BorderLayout.CENTER);
         dialogBuilder.setCenterPanel(dialogPanel);

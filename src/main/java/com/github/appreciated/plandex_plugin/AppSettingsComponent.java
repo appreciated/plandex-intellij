@@ -1,4 +1,4 @@
-package com.github.appreciated.llm_project_quickstart_plugin;
+package com.github.appreciated.plandex_plugin;
 
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPasswordField;
