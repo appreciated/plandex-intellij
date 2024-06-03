@@ -32,10 +32,9 @@
         </group>
 
         <!-- Define the action and add it to the new group -->
-        <action id="test" class="com.github.appreciated.plandex_plugin.GenerateTopDownAction" text="Generate Top Down" icon="com.github.appreciated.plandex_plugin.Icons.GenerateIcon">
+        <action id="addContext" class="com.github.appreciated.plandex_plugin.AddContextAction" text="Kontext hinzufügen">
             <add-to-group group-id="ProjectContextActions" anchor="first"/>
         </action>
-
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
