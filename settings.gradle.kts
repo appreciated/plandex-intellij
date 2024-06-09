@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "llm-project-quickstart-plugin"
+rootProject.name = "plandex-plugin"

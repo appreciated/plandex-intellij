@@ -24,15 +24,15 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
-
+    <depends>org.jetbrains.plugins.terminal</depends>
     <actions>
         <!-- Define the new group and add it to ProjectViewPopupMenu -->
         <group id="ProjectContextActions" text="Project specific actions" description="Project specific actions">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
 
-        <!-- Define the action and add it to the new group -->
-        <action id="addContext" class="com.github.appreciated.plandex_plugin.AddContextAction" text="Kontext hinzufügen">
+
+        <action id="executeTell" class="com.github.appreciated.plandex_plugin.AddContextAction" text="Tell ausführen">
             <add-to-group group-id="ProjectContextActions" anchor="first"/>
         </action>
     </actions>
