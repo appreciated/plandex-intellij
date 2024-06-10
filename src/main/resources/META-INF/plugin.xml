@@ -25,20 +25,22 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
+
     <actions>
         <!-- Define the new group and add it to ProjectViewPopupMenu -->
-        <group id="ProjectContextActions" text="Project specific actions" description="Project specific actions">
+        <group id="com.github.appreciated.plandex_plugin.PlandexActions" text="Plandex" description="Plandex actions" popup="true">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
 
 
-        <action id="executeTell" class="com.github.appreciated.plandex_plugin.AddContextAction" text="Tell ausführen">
-            <add-to-group group-id="ProjectContextActions" anchor="first"/>
+        <action id="executeTell" class="com.github.appreciated.plandex_plugin.AddContextAction" text="Kontext hinzufügen">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable parentId="tools" instance="com.github.appreciated.plandex_plugin.AppSettingsConfigurable"
+        <applicationConfigurable parentId="tools"
+                                 instance="com.github.appreciated.plandex_plugin.AppSettingsConfigurable"
                                  id="org.intellij.sdk.settings.AppSettingsConfigurable"
                                  displayName="LLM Project Quickstart"/>
         <applicationService serviceImplementation="com.github.appreciated.plandex_plugin.AppSettingsState"/>
