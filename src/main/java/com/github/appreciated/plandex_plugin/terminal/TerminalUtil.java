@@ -1,11 +1,8 @@
-package com.github.appreciated.plandex_plugin;
+package com.github.appreciated.plandex_plugin.terminal;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.terminal.JBTerminalWidget;
 import com.intellij.terminal.ui.TerminalWidget;
@@ -20,24 +17,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class AddContextAction extends AnAction {
+public class TerminalUtil {
 
     public static final String UBUNTU_22_04 = "Ubuntu-22.04";
 
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        VirtualFile selectedFile = (VirtualFile) e.getDataContext().getData("virtualFile");
-
-        if (selectedFile != null) {
-            String selectedPath = selectedFile.getPath();
-            String command = "pdx load " + selectedPath;
-            executeCommandInTerminal(e.getProject(), command);
-        } else {
-            Messages.showErrorDialog("Keine Datei oder kein Verzeichnis ausgewählt.", "Fehler");
-        }
-    }
-
-    private void executeCommandInTerminal(Project project, String command) {
+    public static void executeCommandInTerminal(Project project, String command) {
         if (project != null) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
             List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
@@ -80,7 +64,7 @@ public class AddContextAction extends AnAction {
         }
     }
 
-    public static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
+    private static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
         TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
         ToolWindow terminalToolWindow = instance.getToolWindow();
         if (terminalToolWindow != null) {

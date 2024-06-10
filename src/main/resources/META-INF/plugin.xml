@@ -33,7 +33,7 @@
         </group>
 
 
-        <action id="executeTell" class="com.github.appreciated.plandex_plugin.AddContextAction" text="Kontext hinzufügen">
+        <action id="executeTell" class="com.github.appreciated.plandex_plugin.AddFileToContextAction" text="Datei zu Kontext hinzufügen">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
     </actions>
