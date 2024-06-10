@@ -1,10 +1,8 @@
-package com.github.appreciated.plandex_plugin;
+package com.github.appreciated.plandex_plugin.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.project.Project;
-import com.intellij.terminal.JBTerminalWidget;
 import org.jetbrains.annotations.NotNull;
 
 public class ExecuteTellAction extends AnAction {

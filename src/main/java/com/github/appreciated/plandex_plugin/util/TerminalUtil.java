@@ -1,4 +1,4 @@
-package com.github.appreciated.plandex_plugin.terminal;
+package com.github.appreciated.plandex_plugin.util;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;

@@ -1,4 +1,4 @@
-package com.github.appreciated.plandex_plugin;
+package com.github.appreciated.plandex_plugin.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -6,7 +6,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.appreciated.plandex_plugin.terminal.TerminalUtil.executeCommandInTerminal;
+import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandInTerminal;
 
 public class AddFileToContextAction extends AnAction {
 
