@@ -40,10 +40,5 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectViewPane implementation="com.github.appreciated.plandex_plugin.project_pane.CustomProjectViewPane"/>
-        <applicationConfigurable parentId="tools"
-                                 instance="com.github.appreciated.plandex_plugin.AppSettingsConfigurable"
-                                 id="org.intellij.sdk.settings.AppSettingsConfigurable"
-                                 displayName="Plandex Plugin"/>
-        <applicationService serviceImplementation="com.github.appreciated.plandex_plugin.AppSettingsState"/>
     </extensions>
 </idea-plugin>
