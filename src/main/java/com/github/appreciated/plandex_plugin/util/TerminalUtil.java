@@ -3,6 +3,7 @@ package com.github.appreciated.plandex_plugin.util;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.terminal.JBTerminalWidget;
 import com.intellij.terminal.ui.TerminalWidget;
@@ -17,18 +18,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.appreciated.plandex_plugin.util.FileUtil.getCurrentModulePathFromProject;
+
 public class TerminalUtil {
 
     public static final String UBUNTU_22_04 = "Ubuntu-22.04";
 
-    public static void executeCommandInTerminal(Project project, String command) {
+    public static void executeCommandInTerminal(Project project, VirtualFile selectedFile, String command) {
         if (project != null) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
             List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
             if (!relevantTerminalWidgets.isEmpty()) {
                 executeCommand(command, relevantTerminalWidgets.get(0));
             } else {
-                createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), project.getBasePath(), command);
+                createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), getCurrentModulePathFromProject(project, selectedFile), command);
                 new Thread(() -> {
                     try {
                         Thread.sleep(200);

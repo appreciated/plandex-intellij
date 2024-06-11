@@ -1,26 +1,22 @@
 package com.github.appreciated.plandex_plugin.actions;
 
+import com.github.appreciated.plandex_plugin.util.FileUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandInTerminal;
 
-public class AddFileToContextAction extends AnAction {
+public class AddSelectionToPlandexContextAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         VirtualFile selectedFile = (VirtualFile) e.getDataContext().getData("virtualFile");
 
-        if (selectedFile != null) {
-            String selectedPath = selectedFile.getPath();
-            String command = "pdx load " + selectedPath;
-            executeCommandInTerminal(e.getProject(), command);
-        } else {
-            Messages.showErrorDialog("Keine Datei oder kein Verzeichnis ausgewählt.", "Fehler");
-        }
+        String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFile);
+        String relativePath = selectedFile.getPath().replaceFirst(modulePath + "/", "");
+        String command = "pdx load " + relativePath;
+        executeCommandInTerminal(e.getProject(), selectedFile, command);
     }
-
 }
