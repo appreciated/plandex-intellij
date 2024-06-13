@@ -3,8 +3,12 @@ package com.github.appreciated.plandex_plugin.actions;
 import com.github.appreciated.plandex_plugin.util.FileUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandInTerminal;
 
@@ -12,13 +16,16 @@ public class AddSelectionToPlandexContextAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        VirtualFile selectedFile = (VirtualFile) e.getDataContext().getData("virtualFile");
+        VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
 
-        if (selectedFile == null) {
+        if (selectedFiles == null || selectedFiles.length == 0) {
             return; // oder eine geeignete Fehlerbehandlung
         }
-        String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFile);
-        String commandArgs = selectedFile.isDirectory() ? "--recursive" : "";
-        executeCommandInTerminal(e.getProject(), selectedFile, "pdx load", commandArgs, modulePath);
+
+        List<VirtualFile> fileList = Arrays.asList(selectedFiles);
+        String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFiles[0]); // Assuming all files are in the same module
+        String commandArgs = fileList.stream().allMatch(VirtualFile::isDirectory) ? "--recursive" : "";
+
+        executeCommandInTerminal(e.getProject(), fileList, "pdx load", commandArgs, modulePath);
     }
 }

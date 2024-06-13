@@ -20,23 +20,30 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TerminalUtil {
 
     public static final String UBUNTU_22_04 = "Ubuntu-22.04";
 
-    public static void executeCommandInTerminal(Project project, VirtualFile selectedFile, String command, String commandArgs, String workingDirectoryPath) {
-        if (project != null) {
+    public static void executeCommandInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath) {
+        if (project != null && !selectedFiles.isEmpty()) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
             List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
+
+            String finalCommand = selectedFiles.stream()
+                    .map(file -> calculateRelativePath(relevantTerminalWidgets.get(0), file.getPath()))
+                    .map(relativePath -> "%s %s %s".formatted(command, relativePath, commandArgs))
+                    .collect(Collectors.joining("; "));
+
             if (!relevantTerminalWidgets.isEmpty()) {
-                executeCommand(command, selectedFile, commandArgs, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
+                executeCommand(finalCommand, relevantTerminalWidgets.get(0));
             } else {
-                createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, command);
+                createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, finalCommand);
                 new Thread(() -> {
                     try {
                         Thread.sleep(200);
-                        executeCommand(command, selectedFile, commandArgs, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
+                        executeCommand(finalCommand, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -56,18 +63,18 @@ public class TerminalUtil {
                 .toList();
     }
 
-    private static void executeCommand(String command, VirtualFile selectedFile, String commandArgs, ShellTerminalWidget widget) {
-        String actualCommand = "%s %s %s".formatted(command, calculateRelativePath(widget, selectedFile.getPath()), commandArgs);
+    private static void executeCommand(String command, ShellTerminalWidget widget) {
         TtyConnector ttyConnector = widget.getTtyConnector();
         if (ttyConnector != null) {
             try {
-                actualCommand +="\n";
-                ttyConnector.write(actualCommand.getBytes());
+                command += "\n";
+                ttyConnector.write(command.getBytes());
             } catch (IOException ex) {
                 Messages.showErrorDialog("Fehler beim Senden des Befehls: " + ex.getMessage(), "Fehler");
             }
         }
     }
+
 
     private static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
         TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
@@ -79,7 +86,7 @@ public class TerminalUtil {
                     .shellCommand(shellCommand)
                     .build();
             TerminalWidget terminalWidget = terminalRunner.startShellTerminalWidget(Disposer.newDisposable(), startupOptions, true);
-            instance.newTab(terminalToolWindow,terminalWidget);
+            instance.newTab(terminalToolWindow, terminalWidget);
             if (!terminalToolWindow.isVisible()) {
                 terminalToolWindow.show(null);
             }
@@ -104,7 +111,7 @@ public class TerminalUtil {
             currentWslTerminalDir = currentWslTerminalDir.substring(6); // entfernt "/mnt/c"
             int firstSlash = currentWslTerminalDir.indexOf('/');
             if (firstSlash != -1) {
-                currentWslTerminalDir = currentWslTerminalDir.substring(firstSlash+1);
+                currentWslTerminalDir = currentWslTerminalDir.substring(firstSlash + 1);
             }
         }
 
