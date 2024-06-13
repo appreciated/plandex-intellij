@@ -15,6 +15,9 @@ repositories {
 
 dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.mockito:mockito-core:4.0.0")
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -32,6 +35,11 @@ tasks {
         sourceCompatibility = "17"
         targetCompatibility = "17"
     }
+
+    withType<Test> {
+        useJUnitPlatform()
+    }
+
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }

@@ -17,15 +17,8 @@ public class AddSelectionToPlandexContextAction extends AnAction {
         if (selectedFile == null) {
             return; // oder eine geeignete Fehlerbehandlung
         }
-
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFile);
-        String relativePath = selectedFile.getPath().replaceFirst(modulePath + "/", "");
-
-        if (selectedFile.isDirectory()) {
-            relativePath += " --recursive";
-        }
-
-        String command = "pdx load " + relativePath;
-        executeCommandInTerminal(e.getProject(), selectedFile, command);
+        String commandArgs = selectedFile.isDirectory() ? "--recursive" : "";
+        executeCommandInTerminal(e.getProject(), selectedFile, "pdx load", commandArgs, modulePath);
     }
 }
