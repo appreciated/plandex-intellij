@@ -32,7 +32,10 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
 
-        <action id="executeTell" class="com.github.appreciated.plandex_plugin.actions.AddSelectionToPlandexContextAction" text="Auswahl zu Kontext hinzufügen">
+        <action id="loadContext" class="com.github.appreciated.plandex_plugin.actions.AddSelectionToPlandexContextAction" text="Auswahl zu Kontext hinzufügen">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
+        </action>
+        <action id="removeContext" class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromPlandexContextAction" text="Auswahl aus Kontext entfernen">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
     </actions>
