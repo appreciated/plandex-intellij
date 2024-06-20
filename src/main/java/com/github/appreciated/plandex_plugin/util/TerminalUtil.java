@@ -26,7 +26,7 @@ public class TerminalUtil {
 
     public static final String UBUNTU_22_04 = "Ubuntu-22.04";
 
-    public static void executeCommandInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath) {
+    public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath) {
         if (project != null && !selectedFiles.isEmpty()) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
             List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
@@ -36,19 +36,25 @@ public class TerminalUtil {
                     .map(relativePath -> "%s %s %s".formatted(command, relativePath, commandArgs))
                     .collect(Collectors.joining("; "));
 
-            if (!relevantTerminalWidgets.isEmpty()) {
-                executeCommand(finalCommand, relevantTerminalWidgets.get(0));
-            } else {
-                createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, finalCommand);
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(200);
-                        executeCommand(finalCommand, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-            }
+            executeCommandInTerminal(project, finalCommand, workingDirectoryPath);
+        }
+    }
+
+    public static void executeCommandInTerminal(Project project, String command, String workingDirectoryPath) {
+        TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
+        List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
+        if (!relevantTerminalWidgets.isEmpty()) {
+            executeCommand(command, relevantTerminalWidgets.get(0));
+        } else {
+            createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, command);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(200);
+                    executeCommand(command, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
         }
     }
 

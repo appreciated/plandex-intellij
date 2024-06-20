@@ -25,8 +25,7 @@ dependencies {
 intellij {
     version.set("2023.2.5")
     type.set("IC") // Target IDE Platform
-
-    plugins.set(listOf("terminal"))
+    plugins.set(listOf("terminal", "java"))
 }
 
 tasks {

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandInTerminal;
+import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandForEachFileInTerminal;
 
 public class AddSelectionToPlandexContextAction extends AnAction {
 
@@ -26,6 +26,6 @@ public class AddSelectionToPlandexContextAction extends AnAction {
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFiles[0]); // Assuming all files are in the same module
         String commandArgs = fileList.stream().allMatch(VirtualFile::isDirectory) ? "--recursive" : "";
 
-        executeCommandInTerminal(e.getProject(), fileList, "pdx load", commandArgs, modulePath);
+        executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx load", commandArgs, modulePath);
     }
 }
