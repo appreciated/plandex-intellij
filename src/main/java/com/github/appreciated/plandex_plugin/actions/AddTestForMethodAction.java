@@ -4,15 +4,12 @@ import com.github.appreciated.plandex_plugin.util.FileUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsSafe;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -45,21 +42,13 @@ public class AddTestForMethodAction extends AnAction {
         PsiFile selectedFiles = e.getData(CommonDataKeys.PSI_FILE);
         VirtualFile virtualFile = selectedFiles.getVirtualFile();
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), virtualFile);
-        executeCommandInTerminal(e.getProject(), "pdx new", modulePath);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
-        executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
-        if (isPsiMethod(element)) {
-            executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath);
-        }
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            executeCommandInTerminal(e.getProject(), "pdx new", modulePath);
+            executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath);
+            if (isPsiMethod(element)) {
+                executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath);
+            }
+        });
     }
 
     private boolean isPsiMethod(PsiElement element) {

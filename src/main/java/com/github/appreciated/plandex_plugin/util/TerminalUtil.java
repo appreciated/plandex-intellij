@@ -16,6 +16,7 @@ import org.jetbrains.plugins.terminal.ShellTerminalWidget;
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -47,14 +48,13 @@ public class TerminalUtil {
             executeCommand(command, relevantTerminalWidgets.get(0));
         } else {
             createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, command);
-            new Thread(() -> {
-                try {
-                    Thread.sleep(200);
-                    executeCommand(command, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }).start();
+
+            try {
+                Thread.sleep(200);
+                executeCommand(command, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -74,13 +74,29 @@ public class TerminalUtil {
         if (ttyConnector != null) {
             try {
                 command += "\n";
-                ttyConnector.write(command.getBytes());
-            } catch (IOException ex) {
-                Messages.showErrorDialog("Fehler beim Senden des Befehls: " + ex.getMessage(), "Fehler");
+                widget.executeCommand(command);
+                Thread.sleep(500);
+                for (int i = 0; i < 20; i++) {
+                    if (checkIfCommandFinished(widget)) break;
+                    Thread.sleep(200);
+                }
+                ttyConnector.write(command);
+            } catch (IOException | InterruptedException ex) {
+                Messages.showErrorDialog("Error sending command: " + ex.getMessage(), "Error");
             }
         }
     }
 
+    public static boolean checkIfCommandFinished(ShellTerminalWidget widget) {
+        TerminalTextBuffer buffer = widget.getTerminalTextBuffer();
+        String currentLine = buffer.getLine(widget.getTerminal().getCursorY()-1).getText();
+        if (currentLine.matches(".*\\$.*")) {
+            return true;
+        }
+        System.out.println(currentLine);
+        System.out.println("NOT READY");
+        return false;
+    }
 
     private static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
         TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
@@ -97,16 +113,23 @@ public class TerminalUtil {
                 terminalToolWindow.show(null);
             }
         }
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected static String calculateRelativePath(ShellTerminalWidget widget, String windowsFilePath) {
-        TerminalTextBuffer typedShellCommand = widget.getTerminalTextBuffer();
-        String line = typedShellCommand.getLine(0).getText();
-        int lastPromptIndex = line.lastIndexOf('$');
+        TerminalTextBuffer buffer = widget.getTerminalTextBuffer();
+        int index = widget.getTerminal().getCursorY() - 1;
+        String currentLine = buffer.getLine(index).getText();
+        int lastPromptIndex = currentLine.lastIndexOf('$');
         if (lastPromptIndex == -1) {
             return "Fehler: Kein gültiges Pfadende gefunden.";
         }
-        String currentWslTerminalDir = line.substring(0, lastPromptIndex).trim();
+        String currentWslTerminalDir = currentLine.substring(0, lastPromptIndex).trim();
         int lastColon = currentWslTerminalDir.lastIndexOf(':');
         if (lastColon != -1) {
             currentWslTerminalDir = currentWslTerminalDir.substring(lastColon + 1).trim();
@@ -129,16 +152,20 @@ public class TerminalUtil {
             filePathPath = Paths.get(windowsFilePath);
         }
 
-        Path basePath = Paths.get(currentWslTerminalDir);
-
-        // Berechne den relativen Pfad
-        String relativePath = basePath.relativize(filePathPath).toString();
-
-        return convertPathToWSLStyle(relativePath);
+        try {
+            Path basePath = Paths.get(currentWslTerminalDir);
+            // Berechne den relativen Pfad
+            String relativePath = basePath.relativize(filePathPath).toString();
+            return convertPathToWSLStyle(relativePath);
+        } catch (InvalidPathException e){
+            System.err.printf("The path '%s' caused an issue%n", currentLine);
+            throw e;
+        }
     }
 
     /**
      * Konvertiert Windows-Pfadstile zu WSL-Pfadstilen (ersetzt Backslashes mit Slashes)
+     *
      * @param path Der Pfad, der konvertiert werden soll
      * @return Der konvertierte Pfad
      */
