@@ -12,14 +12,14 @@ import java.util.List;
 
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandForEachFileInTerminal;
 
-public class RemoveSelectionFromPlandexContextAction extends AnAction {
+public class RemoveSelectionFromContextAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
 
         if (selectedFiles == null || selectedFiles.length == 0) {
-            return; // oder eine geeignete Fehlerbehandlung
+            return; // or appropriate error handling
         }
 
         List<VirtualFile> fileList = Arrays.asList(selectedFiles);

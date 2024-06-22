@@ -33,13 +33,16 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
 
-        <action id="loadContext" class="com.github.appreciated.plandex_plugin.actions.AddSelectionToPlandexContextAction" text="Auswahl zu Kontext hinzufügen">
+        <action id="loadSelectionIntoContext" class="com.github.appreciated.plandex_plugin.actions.AddSelectionToContextAction" text="Add selection to context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
-        <action id="removeContext" class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromPlandexContextAction" text="Auswahl aus Kontext entfernen">
+        <action id="loadSelectionFromContext" class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromContextAction" text="Remove selection from context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
-        <action id="addTodoToMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Test für Methode hinzufügen">
+        <action id="addTestForMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Add test for this method">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+        <action id="addTodoToMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Update this method">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
     </actions>
