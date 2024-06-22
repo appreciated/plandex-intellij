@@ -75,12 +75,11 @@ public class TerminalUtil {
             try {
                 command += "\n";
                 widget.executeCommand(command);
-                Thread.sleep(500);
-                for (int i = 0; i < 20; i++) {
+                // Maximal 10 Sekunden warten
+                for (int i = 0; i < 50; i++) {
                     if (checkIfCommandFinished(widget)) break;
                     Thread.sleep(200);
                 }
-                ttyConnector.write(command);
             } catch (IOException | InterruptedException ex) {
                 Messages.showErrorDialog("Error sending command: " + ex.getMessage(), "Error");
             }
@@ -90,12 +89,7 @@ public class TerminalUtil {
     public static boolean checkIfCommandFinished(ShellTerminalWidget widget) {
         TerminalTextBuffer buffer = widget.getTerminalTextBuffer();
         String currentLine = buffer.getLine(widget.getTerminal().getCursorY()-1).getText();
-        if (currentLine.matches(".*\\$.*")) {
-            return true;
-        }
-        System.out.println(currentLine);
-        System.out.println("NOT READY");
-        return false;
+        return currentLine.matches(".*\\$.*");
     }
 
     private static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
