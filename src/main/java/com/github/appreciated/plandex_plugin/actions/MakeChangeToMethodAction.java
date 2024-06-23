@@ -18,7 +18,7 @@ import java.util.List;
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandForEachFileInTerminal;
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandInTerminal;
 
-public class RewriteMethodAction extends AnAction {
+public class MakeChangeToMethodAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
