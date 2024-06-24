@@ -1,10 +1,13 @@
 package com.github.appreciated.plandex_plugin.util;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.terminal.JBTerminalWidget;
 import com.intellij.terminal.ui.TerminalWidget;
 import com.jediterm.terminal.TtyConnector;
@@ -30,14 +33,21 @@ public class TerminalUtil {
     public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath, boolean addLineBreak) {
         if (project != null && !selectedFiles.isEmpty()) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
-            List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
 
-            String finalCommand = selectedFiles.stream()
-                    .map(file -> calculateRelativePath(relevantTerminalWidgets.get(0), file.getPath()))
-                    .map(relativePath -> "%s %s %s".formatted(command, relativePath, commandArgs))
-                    .collect(Collectors.joining("; "));
+            List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
+            if (!ubuntuTerminalWidgets.isEmpty()) {
+                String finalCommand = selectedFiles.stream()
+                        .map(file -> calculateRelativePath(ubuntuTerminalWidgets.get(0), file.getPath()))
+                        .map(relativePath -> "%s %s %s".formatted(command, relativePath, commandArgs))
+                        .collect(Collectors.joining("; "));
 
-            executeCommandInTerminal(project, finalCommand, workingDirectoryPath, addLineBreak);
+                executeCommandInTerminal(project, finalCommand, workingDirectoryPath, addLineBreak);
+            } else {
+                ApplicationManager.getApplication().invokeAndWait(() -> {
+                    Messages.showErrorDialog("Kein Terminal vorhanden", "Fehler");
+                    throw new RuntimeException("Kein Terminal vorhanden");
+                });
+            }
         }
     }
 
@@ -50,8 +60,16 @@ public class TerminalUtil {
             createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, command);
 
             try {
-                Thread.sleep(200);
-                executeCommand(command, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0), addLineBreak);
+                Thread.sleep(500);
+                List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
+                if (!ubuntuTerminalWidgets.isEmpty()) {
+                    executeCommand(command, ubuntuTerminalWidgets.get(0), addLineBreak);
+                } else {
+                    ApplicationManager.getApplication().invokeAndWait(() -> {
+                        Messages.showErrorDialog("Terminal konnte nicht erstellt werden.", "Fehler");
+                        throw new RuntimeException("Terminal konnte nicht erstellt werden.");
+                    });
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -91,28 +109,30 @@ public class TerminalUtil {
 
     public static boolean checkIfCommandFinished(ShellTerminalWidget widget) {
         TerminalTextBuffer buffer = widget.getTerminalTextBuffer();
-        String currentLine = buffer.getLine(widget.getTerminal().getCursorY()-1).getText();
+        String currentLine = buffer.getLine(widget.getTerminal().getCursorY() - 1).getText();
         return currentLine.matches(".*\\$.*");
     }
 
     private static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
-        TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
-        ToolWindow terminalToolWindow = instance.getToolWindow();
-        if (terminalToolWindow != null) {
-            LocalTerminalDirectRunner terminalRunner = new LocalTerminalDirectRunner(project);
-            ShellStartupOptions startupOptions = new ShellStartupOptions.Builder()
-                    .workingDirectory(workingDirectoryPath)
-                    .shellCommand(shellCommand)
-                    .build();
-            TerminalWidget terminalWidget = terminalRunner.startShellTerminalWidget(Disposer.newDisposable(), startupOptions, true);
-            instance.newTab(terminalToolWindow, terminalWidget);
-            if (!terminalToolWindow.isVisible()) {
-                terminalToolWindow.show(null);
-            }
-        }
+        ApplicationManager.getApplication().invokeAndWait(() -> {
+            TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
+            ToolWindow terminalToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Terminal");
+            if (terminalToolWindow != null) {
+                LocalTerminalDirectRunner terminalRunner = new LocalTerminalDirectRunner(project);
+                ShellStartupOptions startupOptions = new ShellStartupOptions.Builder()
+                        .workingDirectory(workingDirectoryPath)
+                        .shellCommand(shellCommand)
+                        .build();
 
+                TerminalWidget terminalWidget = terminalRunner.startShellTerminalWidget(Disposer.newDisposable(), startupOptions, true);
+                instance.newTab(terminalToolWindow, terminalWidget);
+                if (!terminalToolWindow.isVisible()) {
+                    terminalToolWindow.show(null);
+                }
+            }
+        });
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -154,7 +174,7 @@ public class TerminalUtil {
             // Berechne den relativen Pfad
             String relativePath = basePath.relativize(filePathPath).toString();
             return convertPathToWSLStyle(relativePath);
-        } catch (InvalidPathException e){
+        } catch (InvalidPathException e) {
             System.err.printf("The path '%s' caused an issue%n", currentLine);
             throw e;
         }
