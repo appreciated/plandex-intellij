@@ -27,7 +27,7 @@ public class TerminalUtil {
 
     public static final String UBUNTU_22_04 = "Ubuntu-22.04";
 
-    public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath) {
+    public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath, boolean addLineBreak) {
         if (project != null && !selectedFiles.isEmpty()) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
             List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
@@ -37,21 +37,21 @@ public class TerminalUtil {
                     .map(relativePath -> "%s %s %s".formatted(command, relativePath, commandArgs))
                     .collect(Collectors.joining("; "));
 
-            executeCommandInTerminal(project, finalCommand, workingDirectoryPath);
+            executeCommandInTerminal(project, finalCommand, workingDirectoryPath, addLineBreak);
         }
     }
 
-    public static void executeCommandInTerminal(Project project, String command, String workingDirectoryPath) {
+    public static void executeCommandInTerminal(Project project, String command, String workingDirectoryPath, boolean addLineBreak) {
         TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
         List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
         if (!relevantTerminalWidgets.isEmpty()) {
-            executeCommand(command, relevantTerminalWidgets.get(0));
+            executeCommand(command, relevantTerminalWidgets.get(0), addLineBreak);
         } else {
             createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, command);
 
             try {
                 Thread.sleep(200);
-                executeCommand(command, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0));
+                executeCommand(command, getUbuntuTerminalWidgets(terminalToolWindowManager).get(0), addLineBreak);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -69,12 +69,15 @@ public class TerminalUtil {
                 .toList();
     }
 
-    private static void executeCommand(String command, ShellTerminalWidget widget) {
+    private static void executeCommand(String command, ShellTerminalWidget widget, boolean addLineBreak) {
         TtyConnector ttyConnector = widget.getTtyConnector();
         if (ttyConnector != null) {
             try {
-                command += "\n";
-                widget.executeCommand(command);
+                if (addLineBreak) {
+                    command += "\n";
+                }
+                ttyConnector.write(command.getBytes());
+                Thread.sleep(500);
                 // Maximal 10 Sekunden warten
                 for (int i = 0; i < 50; i++) {
                     if (checkIfCommandFinished(widget)) break;

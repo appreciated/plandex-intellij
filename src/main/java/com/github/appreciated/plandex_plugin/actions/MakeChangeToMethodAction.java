@@ -43,10 +43,10 @@ public class MakeChangeToMethodAction extends AnAction {
         VirtualFile virtualFile = selectedFiles.getVirtualFile();
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), virtualFile);
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-            executeCommandInTerminal(e.getProject(), "pdx new", modulePath);
-            executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath);
+            executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
+            executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
             if (isPsiMethod(element)) {
-                executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath);
+                executeCommandInTerminal(e.getProject(), "pdx tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath, false);
             }
         });
     }

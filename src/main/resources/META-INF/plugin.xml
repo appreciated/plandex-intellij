@@ -42,7 +42,7 @@
         <action id="addTestForMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Add test for this method">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
-        <action id="MakeChangeToMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Make a change to this method">
+        <action id="MakeChangeToMethod" class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction" text="Make a change to this method">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
     </actions>

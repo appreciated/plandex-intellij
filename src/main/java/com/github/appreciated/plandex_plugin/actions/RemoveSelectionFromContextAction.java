@@ -26,6 +26,6 @@ public class RemoveSelectionFromContextAction extends AnAction {
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFiles[0]); // Assuming all files are in the same module
         String commandArgs = fileList.stream().allMatch(VirtualFile::isDirectory) ? "--recursive" : "";
 
-        executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx rm", commandArgs, modulePath);
+        executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx rm", commandArgs, modulePath, true);
     }
 }
