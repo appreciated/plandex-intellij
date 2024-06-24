@@ -83,7 +83,7 @@ public class TerminalUtil {
                 .filter(widget -> widget instanceof ShellTerminalWidget)
                 .map(widget -> (ShellTerminalWidget) widget)
                 .filter(widget -> widget.getShellCommand() != null)
-                .filter(widget -> widget.getShellCommand().stream().anyMatch(s -> s.contains("Ubuntu")))
+                .filter(widget -> widget.getShellCommand().stream().anyMatch(s -> s.toLowerCase().contains("Ubuntu".toLowerCase())))
                 .toList();
     }
 
