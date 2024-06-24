@@ -38,7 +38,7 @@ public class TerminalUtil {
             if (!ubuntuTerminalWidgets.isEmpty()) {
                 String finalCommand = selectedFiles.stream()
                         .map(file -> calculateRelativePath(ubuntuTerminalWidgets.get(0), file.getPath()))
-                        .map(relativePath -> "%s %s %s".formatted(command, relativePath, commandArgs))
+                        .map(relativePath -> "%s %s %s".formatted(command, relativePath.contains(" ") ? "\"" + relativePath + "\"" : relativePath, commandArgs))
                         .collect(Collectors.joining("; "));
 
                 executeCommandInTerminal(project, finalCommand, workingDirectoryPath, addLineBreak);
