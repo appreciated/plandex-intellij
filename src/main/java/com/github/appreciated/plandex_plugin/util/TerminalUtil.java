@@ -1,7 +1,6 @@
 package com.github.appreciated.plandex_plugin.util;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
@@ -35,9 +34,14 @@ public class TerminalUtil {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
 
             List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
+            if (ubuntuTerminalWidgets.isEmpty()) {
+                createTerminalAtWorkingDir(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath);
+            }
+            ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
             if (!ubuntuTerminalWidgets.isEmpty()) {
+                List<ShellTerminalWidget> finalUbuntuTerminalWidgets = ubuntuTerminalWidgets;
                 String finalCommand = selectedFiles.stream()
-                        .map(file -> calculateRelativePath(ubuntuTerminalWidgets.get(0), file.getPath()))
+                        .map(file -> calculateRelativePath(finalUbuntuTerminalWidgets.get(0), file.getPath()))
                         .map(relativePath -> "%s %s %s".formatted(command, relativePath.contains(" ") ? "\"" + relativePath + "\"" : relativePath, commandArgs))
                         .collect(Collectors.joining("; "));
 
@@ -57,8 +61,7 @@ public class TerminalUtil {
         if (!relevantTerminalWidgets.isEmpty()) {
             executeCommand(command, relevantTerminalWidgets.get(0), addLineBreak);
         } else {
-            createTerminalWithCommand(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath, command);
-
+            createTerminalAtWorkingDir(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath);
             try {
                 Thread.sleep(500);
                 List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
@@ -113,22 +116,27 @@ public class TerminalUtil {
         return currentLine.matches(".*\\$.*");
     }
 
-    private static void createTerminalWithCommand(Project project, List<String> shellCommand, String workingDirectoryPath, String command) {
+    private static void createTerminalAtWorkingDir(Project project, List<String> shellCommand, String workingDirectoryPath) {
         ApplicationManager.getApplication().invokeAndWait(() -> {
-            TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
-            ToolWindow terminalToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Terminal");
-            if (terminalToolWindow != null) {
-                LocalTerminalDirectRunner terminalRunner = new LocalTerminalDirectRunner(project);
-                ShellStartupOptions startupOptions = new ShellStartupOptions.Builder()
-                        .workingDirectory(workingDirectoryPath)
-                        .shellCommand(shellCommand)
-                        .build();
+            try {
+                TerminalToolWindowManager instance = TerminalToolWindowManager.getInstance(project);
+                ToolWindow terminalToolWindow = ToolWindowManager.getInstance(project).getToolWindow("Terminal");
+                if (terminalToolWindow != null) {
+                    LocalTerminalDirectRunner terminalRunner = new LocalTerminalDirectRunner(project);
+                    ShellStartupOptions startupOptions = new ShellStartupOptions.Builder()
+                            .workingDirectory(workingDirectoryPath)
+                            .shellCommand(shellCommand)
+                            .build();
 
-                TerminalWidget terminalWidget = terminalRunner.startShellTerminalWidget(Disposer.newDisposable(), startupOptions, true);
-                instance.newTab(terminalToolWindow, terminalWidget);
-                if (!terminalToolWindow.isVisible()) {
-                    terminalToolWindow.show(null);
+                    TerminalWidget terminalWidget = terminalRunner.startShellTerminalWidget(Disposer.newDisposable(), startupOptions, true);
+                    instance.newTab(terminalToolWindow, terminalWidget);
+                    if (!terminalToolWindow.isVisible()) {
+                        terminalToolWindow.show(null);
+                    }
                 }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw e;
             }
         });
         try {
