@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandForEachFileInTerminal;
+import static com.github.appreciated.plandex_plugin.util.TerminalUtil.sendClear;
 
 public class AddSelectionToContextAction extends AnAction {
 
@@ -33,6 +34,7 @@ public class AddSelectionToContextAction extends AnAction {
         String commandArgs = fileList.stream().allMatch(VirtualFile::isDirectory) ? "--recursive" : "";
 
         try {
+            sendClear(e.getProject(), modulePath);
             executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx load", commandArgs, modulePath, true);
         } catch (IOException ex) {
             throw new RuntimeException(ex);

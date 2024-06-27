@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandForEachFileInTerminal;
-import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandInTerminal;
+import static com.github.appreciated.plandex_plugin.util.TerminalUtil.*;
 
 public class MakeChangeToMethodAction extends AnAction {
 
@@ -50,6 +49,7 @@ public class MakeChangeToMethodAction extends AnAction {
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), virtualFile);
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
+                sendClear(e.getProject(), modulePath);
                 executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
                 executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
                 if (isPsiMethod(element)) {

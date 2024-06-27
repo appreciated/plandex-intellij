@@ -29,54 +29,26 @@ import java.util.stream.Collectors;
 
 public class TerminalUtil {
 
+    public static void sendClear(Project project, String workingDirectoryPath) throws IOException {
+        ShellTerminalWidget relevantTerminalWidget = getOrCreateUbuntuTerminalWidget(project, workingDirectoryPath);
+        executeCommand(String.valueOf((char)3), relevantTerminalWidget, false);
+    }
+
     public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath, boolean addLineBreak) throws IOException {
         if (project != null && !selectedFiles.isEmpty()) {
-            TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
+            ShellTerminalWidget relevantTerminalWidget = getOrCreateUbuntuTerminalWidget(project, workingDirectoryPath);
+            String finalCommand = selectedFiles.stream()
+                    .map(file -> calculateRelativePath(relevantTerminalWidget, file.getPath()))
+                    .map(relativePath -> "%s %s %s".formatted(command, relativePath.contains(" ") ? "\"" + relativePath + "\"" : relativePath, commandArgs))
+                    .collect(Collectors.joining("; "));
 
-            List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
-            if (ubuntuTerminalWidgets.isEmpty()) {
-                createTerminalAtWorkingDir(project, getShellCommand(), workingDirectoryPath);
-            }
-            ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
-            if (!ubuntuTerminalWidgets.isEmpty()) {
-                List<ShellTerminalWidget> finalUbuntuTerminalWidgets = ubuntuTerminalWidgets;
-                String finalCommand = selectedFiles.stream()
-                        .map(file -> calculateRelativePath(finalUbuntuTerminalWidgets.get(0), file.getPath()))
-                        .map(relativePath -> "%s %s %s".formatted(command, relativePath.contains(" ") ? "\"" + relativePath + "\"" : relativePath, commandArgs))
-                        .collect(Collectors.joining("; "));
-
-                executeCommandInTerminal(project, finalCommand, workingDirectoryPath, addLineBreak);
-            } else {
-                ApplicationManager.getApplication().invokeAndWait(() -> {
-                    Messages.showErrorDialog("Kein Terminal vorhanden", "Fehler");
-                    throw new RuntimeException("Kein Terminal vorhanden");
-                });
-            }
+            executeCommandInTerminal(project, finalCommand, workingDirectoryPath, addLineBreak);
         }
     }
 
     public static void executeCommandInTerminal(Project project, String command, String workingDirectoryPath, boolean addLineBreak) throws IOException {
-        TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
-        List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
-        if (!relevantTerminalWidgets.isEmpty()) {
-            executeCommand(command, relevantTerminalWidgets.get(0), addLineBreak);
-        } else {
-            createTerminalAtWorkingDir(project, getShellCommand(), workingDirectoryPath);
-            try {
-                Thread.sleep(500);
-                List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
-                if (!ubuntuTerminalWidgets.isEmpty()) {
-                    executeCommand(command, ubuntuTerminalWidgets.get(0), addLineBreak);
-                } else {
-                    ApplicationManager.getApplication().invokeAndWait(() -> {
-                        Messages.showErrorDialog("Terminal konnte nicht erstellt werden.", "Fehler");
-                        throw new RuntimeException("Terminal konnte nicht erstellt werden.");
-                    });
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ShellTerminalWidget relevantTerminalWidget = getOrCreateUbuntuTerminalWidget(project, workingDirectoryPath);
+        executeCommand(command, relevantTerminalWidget, addLineBreak);
     }
 
     public static List<String> getShellCommand() throws IOException {
@@ -92,8 +64,24 @@ public class TerminalUtil {
         }
     }
 
-    private static @NotNull List<ShellTerminalWidget> getUbuntuTerminalWidgets(TerminalToolWindowManager terminalToolWindowManager) {
-        Set<TerminalWidget> terminalWidgets = terminalToolWindowManager.getTerminalWidgets();
+    private static @NotNull ShellTerminalWidget getOrCreateUbuntuTerminalWidget(Project project, String workingDirectoryPath) throws IOException {
+        TerminalToolWindowManager manager = TerminalToolWindowManager.getInstance(project);
+        List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(manager);
+        if (ubuntuTerminalWidgets.isEmpty()) {
+            createTerminalAtWorkingDir(project, getShellCommand(), workingDirectoryPath);
+            ubuntuTerminalWidgets = getUbuntuTerminalWidgets(manager);
+            if (ubuntuTerminalWidgets.isEmpty()) {
+                throw new RuntimeException("Kein Terminal vorhanden");
+            } else {
+                return ubuntuTerminalWidgets.get(0);
+            }
+        } else {
+            return ubuntuTerminalWidgets.get(0);
+        }
+    }
+
+    private static @NotNull List<ShellTerminalWidget> getUbuntuTerminalWidgets(TerminalToolWindowManager manager) {
+        Set<TerminalWidget> terminalWidgets = manager.getTerminalWidgets();
         return terminalWidgets.stream()
                 .map(JBTerminalWidget::asJediTermWidget)
                 .filter(widget -> widget instanceof ShellTerminalWidget)
@@ -102,6 +90,7 @@ public class TerminalUtil {
                 .filter(widget -> widget.getShellCommand().stream().anyMatch(s -> s.toLowerCase().contains("Ubuntu".toLowerCase())))
                 .toList();
     }
+
 
     private static void executeCommand(String command, ShellTerminalWidget widget, boolean addLineBreak) {
         TtyConnector ttyConnector = widget.getTtyConnector();
