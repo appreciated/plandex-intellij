@@ -31,7 +31,7 @@ public class TerminalUtil {
 
     public static void sendClear(Project project, String workingDirectoryPath) throws IOException {
         ShellTerminalWidget relevantTerminalWidget = getOrCreateUbuntuTerminalWidget(project, workingDirectoryPath);
-        executeCommand(String.valueOf((char)3), relevantTerminalWidget, false);
+        executeCommand(String.valueOf((char) 3), relevantTerminalWidget, false);
     }
 
     public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath, boolean addLineBreak) throws IOException {
