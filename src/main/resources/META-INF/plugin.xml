@@ -32,6 +32,9 @@
         <group id="com.github.appreciated.plandex_plugin.PlandexActions" text="Plandex" description="Plandex actions" popup="true">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
+        <group id="com.github.appreciated.plandex_plugin.PlandexEditorActions" text="Plandex" description="Plandex actions" popup="true">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
 
         <action id="loadSelectionIntoContext" class="com.github.appreciated.plandex_plugin.actions.AddSelectionToContextAction" text="Add selection to context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
@@ -40,10 +43,10 @@
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
         <action id="addTestForMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Add test for this method">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="last"/>
         </action>
         <action id="MakeChangeToMethod" class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction" text="Make a change to this method">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="last"/>
         </action>
     </actions>
 
