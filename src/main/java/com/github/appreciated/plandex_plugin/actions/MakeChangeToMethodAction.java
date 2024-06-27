@@ -33,17 +33,14 @@ public class MakeChangeToMethodAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
-        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
 
-        if (project == null || editor == null || psiFile == null) {
+        PsiElement element = e.getData(CommonDataKeys.PSI_ELEMENT);
+        PsiFile selectedFile = e.getData(CommonDataKeys.PSI_FILE);
+        if (project == null || element == null || selectedFile == null) {
             return;
         }
 
-        PsiElement element = e.getData(CommonDataKeys.PSI_ELEMENT);
-
-        PsiFile selectedFiles = e.getData(CommonDataKeys.PSI_FILE);
-        VirtualFile virtualFile = selectedFiles.getVirtualFile();
+        VirtualFile virtualFile = selectedFile.getVirtualFile();
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), virtualFile);
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
@@ -51,7 +48,12 @@ public class MakeChangeToMethodAction extends AnAction {
                 executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
                 executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
                 if (isPsiMethod(element)) {
-                    executeCommandInTerminal(e.getProject(), "pdx tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath, false);
+                    executeCommandInTerminal(
+                            e.getProject(),
+                            "pdx tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), virtualFile.getName()),
+                            modulePath,
+                            false
+                    );
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
