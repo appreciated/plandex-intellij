@@ -91,7 +91,6 @@ public class TerminalUtil {
                 .toList();
     }
 
-
     private static void executeCommand(String command, ShellTerminalWidget widget, boolean addLineBreak) {
         TtyConnector ttyConnector = widget.getTtyConnector();
         if (ttyConnector != null) {

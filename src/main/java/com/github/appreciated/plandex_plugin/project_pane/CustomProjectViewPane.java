@@ -1,6 +1,5 @@
 package com.github.appreciated.plandex_plugin.project_pane;
 
-
 import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTarget;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;

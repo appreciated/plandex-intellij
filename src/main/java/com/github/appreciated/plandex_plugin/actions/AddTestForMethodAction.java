@@ -59,7 +59,4 @@ public class AddTestForMethodAction extends AnAction {
         });
     }
 
-
-
-
 }
