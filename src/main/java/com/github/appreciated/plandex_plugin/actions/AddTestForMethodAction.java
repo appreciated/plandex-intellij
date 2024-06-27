@@ -1,10 +1,7 @@
 package com.github.appreciated.plandex_plugin.actions;
 
 import com.github.appreciated.plandex_plugin.util.FileUtil;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -14,9 +11,9 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 
+import static com.github.appreciated.plandex_plugin.util.EditorSelectionUtil.*;
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.*;
 
 public class AddTestForMethodAction extends AnAction {
@@ -27,9 +24,7 @@ public class AddTestForMethodAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        PsiElement element = e.getData(CommonDataKeys.PSI_ELEMENT);
-        boolean isMethod = element != null && element.getClass().toString().contains("Method");
-        e.getPresentation().setEnabledAndVisible(isMethod);
+        e.getPresentation().setEnabledAndVisible(isMethodSelected(e));
     }
 
     @Override
@@ -61,26 +56,6 @@ public class AddTestForMethodAction extends AnAction {
         });
     }
 
-    private boolean isPsiMethod(PsiElement element) {
-        if (element == null) {
-            return false;
-        }
-        try {
-            Method getNameMethod = element.getClass().getMethod("getName");
-            return getNameMethod != null;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-    }
 
-    private String getPsiMethodName(PsiElement psiMethod) {
-        try {
-            Method getNameMethod = psiMethod.getClass().getMethod("getName");
-            return (String) getNameMethod.invoke(psiMethod);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "UnknownMethod";
-        }
-    }
 
 }

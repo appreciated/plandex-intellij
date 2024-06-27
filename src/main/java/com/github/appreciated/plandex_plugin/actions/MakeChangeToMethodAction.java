@@ -14,9 +14,9 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 
+import static com.github.appreciated.plandex_plugin.util.EditorSelectionUtil.*;
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.*;
 
 public class MakeChangeToMethodAction extends AnAction {
@@ -27,9 +27,7 @@ public class MakeChangeToMethodAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        PsiElement element = e.getData(CommonDataKeys.PSI_ELEMENT);
-        boolean isMethod = element != null && element.getClass().toString().contains("Method");
-        e.getPresentation().setEnabledAndVisible(isMethod);
+        e.getPresentation().setEnabledAndVisible(isMethodSelected(e));
     }
 
     @Override
@@ -59,28 +57,6 @@ public class MakeChangeToMethodAction extends AnAction {
                 throw new RuntimeException(ex);
             }
         });
-    }
-
-    private boolean isPsiMethod(PsiElement element) {
-        if (element == null) {
-            return false;
-        }
-        try {
-            Method getNameMethod = element.getClass().getMethod("getName");
-            return getNameMethod != null;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-    }
-
-    private String getPsiMethodName(PsiElement psiMethod) {
-        try {
-            Method getNameMethod = psiMethod.getClass().getMethod("getName");
-            return (String) getNameMethod.invoke(psiMethod);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "UnknownMethod";
-        }
     }
 
 }
