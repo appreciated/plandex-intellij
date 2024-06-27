@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +32,10 @@ public class RemoveSelectionFromContextAction extends AnAction {
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), selectedFiles[0]); // Assuming all files are in the same module
         String commandArgs = fileList.stream().allMatch(VirtualFile::isDirectory) ? "--recursive" : "";
 
-        executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx rm", commandArgs, modulePath, true);
+        try {
+            executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx rm", commandArgs, modulePath, true);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

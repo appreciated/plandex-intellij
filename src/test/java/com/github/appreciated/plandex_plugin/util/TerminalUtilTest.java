@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -59,5 +62,11 @@ public class TerminalUtilTest {
     public void checkIfCommandFinishedFalse() {
         when(mockLine.getText()).thenReturn("\uD83D\uDCC4 src/main/java/com/github/appreciated/plandex_plugin/util/TerminalUtil.");
         Assertions.assertFalse(TerminalUtil.checkIfCommandFinished(mockWidget));
+    }
+
+    @Test
+    public void testGetUbuntuCommand() throws IOException {
+        List<String> shellCommand = TerminalUtil.getShellCommand();
+        Assertions.assertTrue(shellCommand.stream().anyMatch(s -> s.toLowerCase().contains("ubuntu")));
     }
 }

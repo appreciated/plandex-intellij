@@ -17,7 +17,9 @@ import org.jetbrains.plugins.terminal.ShellStartupOptions;
 import org.jetbrains.plugins.terminal.ShellTerminalWidget;
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,9 +29,7 @@ import java.util.stream.Collectors;
 
 public class TerminalUtil {
 
-    public static final String UBUNTU_22_04 = "Ubuntu-22.04";
-
-    public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath, boolean addLineBreak) {
+    public static void executeCommandForEachFileInTerminal(Project project, List<VirtualFile> selectedFiles, String command, String commandArgs, String workingDirectoryPath, boolean addLineBreak) throws IOException {
         if (project != null && !selectedFiles.isEmpty()) {
             TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
 
@@ -55,13 +55,13 @@ public class TerminalUtil {
         }
     }
 
-    public static void executeCommandInTerminal(Project project, String command, String workingDirectoryPath, boolean addLineBreak) {
+    public static void executeCommandInTerminal(Project project, String command, String workingDirectoryPath, boolean addLineBreak) throws IOException {
         TerminalToolWindowManager terminalToolWindowManager = TerminalToolWindowManager.getInstance(project);
         List<ShellTerminalWidget> relevantTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
         if (!relevantTerminalWidgets.isEmpty()) {
             executeCommand(command, relevantTerminalWidgets.get(0), addLineBreak);
         } else {
-            createTerminalAtWorkingDir(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath);
+            createTerminalAtWorkingDir(project, getShellCommand(), workingDirectoryPath);
             try {
                 Thread.sleep(500);
                 List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
@@ -76,6 +76,19 @@ public class TerminalUtil {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public static List<String> getShellCommand() throws IOException {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            Process process = new ProcessBuilder("wsl", "--list", "-q").start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String ubuntuWsl = reader.lines().map(s -> s.replaceAll("\u0000", ""))
+                    .filter(s -> s.toLowerCase().contains("ubuntu"))
+                    .findFirst().orElseThrow();
+            return List.of("wsl.exe", "-d", ubuntuWsl);
+        } else {
+            return List.of("bash");
         }
     }
 

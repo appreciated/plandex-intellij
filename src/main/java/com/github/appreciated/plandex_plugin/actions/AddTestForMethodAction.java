@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -48,10 +49,14 @@ public class AddTestForMethodAction extends AnAction {
         VirtualFile virtualFile = selectedFiles.getVirtualFile();
         String modulePath = FileUtil.getCurrentModulePathFromProject(e.getProject(), virtualFile);
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-            executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
-            executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
-            if (isPsiMethod(element)) {
-                executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath, true);
+            try {
+                executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
+                executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
+                if (isPsiMethod(element)) {
+                    executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath, true);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
     }
