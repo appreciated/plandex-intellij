@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -48,13 +50,15 @@ public class AddTestForMethodAction extends AnAction {
                 executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
                 executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
                 if (isPsiMethod(element)) {
-                    executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), virtualFile.getName()), modulePath, true);
+                    String relativePath = VfsUtilCore.getRelativePath(virtualFile, ProjectUtil.guessProjectDir(e.getProject()));
+                    executeCommandInTerminal(e.getProject(), "pdx tell \"Create a Test for the method %s in the class %s\"".formatted(getPsiMethodName(element), relativePath), modulePath, true);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
     }
+
 
 
 

@@ -7,6 +7,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -47,9 +49,10 @@ public class MakeChangeToMethodAction extends AnAction {
                 executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
                 executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
                 if (isPsiMethod(element)) {
+                    String relativePath = VfsUtilCore.getRelativePath(virtualFile, ProjectUtil.guessProjectDir(e.getProject()));
                     executeCommandInTerminal(
                             e.getProject(),
-                            "pdx tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), virtualFile.getName()),
+                            "pdx tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), relativePath),
                             modulePath,
                             false
                     );
