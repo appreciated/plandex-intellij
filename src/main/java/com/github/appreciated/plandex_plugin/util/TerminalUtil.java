@@ -35,7 +35,7 @@ public class TerminalUtil {
 
             List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
             if (ubuntuTerminalWidgets.isEmpty()) {
-                createTerminalAtWorkingDir(project, List.of("wsl.exe", "-d", UBUNTU_22_04), workingDirectoryPath);
+                createTerminalAtWorkingDir(project, getShellCommand(), workingDirectoryPath);
             }
             ubuntuTerminalWidgets = getUbuntuTerminalWidgets(terminalToolWindowManager);
             if (!ubuntuTerminalWidgets.isEmpty()) {
