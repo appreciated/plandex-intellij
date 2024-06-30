@@ -15,6 +15,17 @@ import java.lang.reflect.Method;
 
 public class EditorSelectionUtil {
 
+    public static boolean isClassSelected(@NotNull AnActionEvent e) {
+        Editor editor = e.getData(DataKeys.EDITOR);
+        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
+        if (psiFile == null) return false;
+        PsiElement element = psiFile.findElementAt(editor.getCaretModel().getOffset());
+        if (element == null) return false;
+        PsiMethod method = PsiTreeUtil.getParentOfType(element.getParent(), PsiMethod.class);
+        PsiClass psiClass = PsiTreeUtil.getParentOfType(element.getParent(), PsiClass.class);
+        return method == null && psiClass == null;
+    }
+
     public static boolean isMethodSelected(@NotNull AnActionEvent e) {
 
         Editor editor = e.getData(DataKeys.EDITOR);

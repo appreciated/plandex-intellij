@@ -42,11 +42,14 @@
         <action id="loadSelectionFromContext" class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromContextAction" text="Remove selection from context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
-        <action id="addTestForMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Add test for this method">
-            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="last"/>
+        <action id="addClassToContext" class="com.github.appreciated.plandex_plugin.actions.AddEditorSelectionToContextAction" text="Add class to context">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
-        <action id="MakeChangeToMethod" class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction" text="Make a change to this method">
-            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="last"/>
+        <action id="addTestForMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Add test for this method">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
+        </action>
+        <action id="makeChangeToMethod" class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction" text="Make a change to this method">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
     </actions>
 
