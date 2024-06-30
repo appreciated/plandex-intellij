@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
@@ -21,7 +22,9 @@ public class EditorSelectionUtil {
         if (psiFile == null) return false;
         PsiElement element = psiFile.findElementAt(editor.getCaretModel().getOffset());
         if (element == null) return false;
-        return PsiTreeUtil.getParentOfType(element.getParent(), PsiMethod.class) == null;
+        PsiMethod method = PsiTreeUtil.getParentOfType(element.getParent(), PsiMethod.class);
+        PsiClass psiClass = PsiTreeUtil.getParentOfType(element.getParent(), PsiClass.class);
+        return method == null && psiClass != null;
     }
 
     public static boolean isPsiMethod(PsiElement element) {
