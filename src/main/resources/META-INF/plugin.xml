@@ -28,28 +28,48 @@
     <depends>org.jetbrains.plugins.terminal</depends>
 
     <actions>
-        <!-- Define the new group and add it to ProjectViewPopupMenu -->
+        <!-- Plandex project view selection actions -->
         <group id="com.github.appreciated.plandex_plugin.PlandexActions" text="Plandex" description="Plandex actions" popup="true">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
+        <action id="loadSelectionIntoContext"
+                class="com.github.appreciated.plandex_plugin.actions.AddSelectionToContextAction"
+                text="Add selection to context">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
+        </action>
+        <action id="loadSelectionFromContext"
+                class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromContextAction"
+                text="Remove selection from context">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
+        </action>
+        <!-- Plandex code editor actions -->
         <group id="com.github.appreciated.plandex_plugin.PlandexEditorActions" text="Plandex" description="Plandex actions" popup="true">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </group>
-
-        <action id="loadSelectionIntoContext" class="com.github.appreciated.plandex_plugin.actions.AddSelectionToContextAction" text="Add selection to context">
-            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
-        </action>
-        <action id="loadSelectionFromContext" class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromContextAction" text="Remove selection from context">
-            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
-        </action>
-        <action id="addClassToContext" class="com.github.appreciated.plandex_plugin.actions.AddEditorSelectionToContextAction" text="Add class to context">
+        <action id="addClassToContext"
+                class="com.github.appreciated.plandex_plugin.actions.AddEditorSelectionToContextAction"
+                text="Add class to context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
-        <action id="addTestForMethod" class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction" text="Add test for this method">
+        <action id="addTestForMethod"
+                class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction"
+                text="Add test for this method">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
-        <action id="makeChangeToMethod" class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction" text="Make a change to this method">
+        <action id="makeChangeToMethod"
+                class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction"
+                text="Make a change to this method">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
+        </action>
+        <!-- Plandex Test actions -->
+        <group id="com.github.appreciated.plandex_plugin.PlandexTestActions" text="Plandex" description="Plandex actions" popup="true">
+            <add-to-group group-id="TestTreePopupMenu" anchor="last"/>
+        </group>
+        <action id="fixFailingTestAction"
+                class="com.github.appreciated.plandex_plugin.actions.FixFailingTestAction"
+                text="Fix test"
+                description="Tells plandex to fix the test">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexTestActions" anchor="first"/>
         </action>
     </actions>
 
@@ -57,4 +77,5 @@
         <projectViewPane implementation="com.github.appreciated.plandex_plugin.project_pane.CustomProjectViewPane"/>
     </extensions>
 </idea-plugin>
+
 
