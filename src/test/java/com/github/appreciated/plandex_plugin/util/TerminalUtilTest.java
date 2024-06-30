@@ -54,7 +54,7 @@ public class TerminalUtilTest {
 
     @Test
     public void checkIfCommandFinished() {
-        when(mockLine.getText()).thenReturn("user@HOSTNAME:/mnt/c/Users/Example$ pdx new");
+        when(mockLine.getText()).thenReturn("user@HOSTNAME:/mnt/c/Users/Example$ plandex new");
         Assertions.assertTrue(TerminalUtil.checkIfCommandFinished(mockWidget));
     }
 

@@ -46,13 +46,13 @@ public class MakeChangeToMethodAction extends AnAction {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
                 sendClear(e.getProject(), modulePath);
-                executeCommandInTerminal(e.getProject(), "pdx new", modulePath, true);
-                executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "pdx l", "", modulePath, true);
+                executeCommandInTerminal(e.getProject(), "plandex new", modulePath, true);
+                executeCommandForEachFileInTerminal(e.getProject(), List.of(virtualFile), "plandex l", "", modulePath, true);
                 if (isPsiMethod(element)) {
                     String relativePath = VfsUtilCore.getRelativePath(virtualFile, ProjectUtil.guessProjectDir(e.getProject()));
                     executeCommandInTerminal(
                             e.getProject(),
-                            "pdx tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), relativePath),
+                            "plandex tell \"Make a change to the method %s in the class %s. <Your Prompty>\"".formatted(getPsiMethodName(element), relativePath),
                             modulePath,
                             false
                     );

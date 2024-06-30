@@ -37,7 +37,7 @@ public class AddSelectionToContextAction extends AnAction {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
                 sendClear(e.getProject(), modulePath);
-                executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx load", commandArgs, modulePath, true);
+                executeCommandForEachFileInTerminal(e.getProject(), fileList, "plandex load", commandArgs, modulePath, true);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

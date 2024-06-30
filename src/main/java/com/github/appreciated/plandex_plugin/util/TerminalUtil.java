@@ -52,7 +52,7 @@ public class TerminalUtil {
     }
 
     public static List<String> getShellCommand() throws IOException {
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+        if (isWin()) {
             Process process = new ProcessBuilder("wsl", "--list", "-q").start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String ubuntuWsl = reader.lines().map(s -> s.replaceAll("\u0000", ""))
@@ -62,6 +62,10 @@ public class TerminalUtil {
         } else {
             return List.of("bash");
         }
+    }
+
+    private static boolean isWin() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
     }
 
     private static @NotNull ShellTerminalWidget getOrCreateUbuntuTerminalWidget(Project project, String workingDirectoryPath) throws IOException {
@@ -87,7 +91,7 @@ public class TerminalUtil {
                 .filter(widget -> widget instanceof ShellTerminalWidget)
                 .map(widget -> (ShellTerminalWidget) widget)
                 .filter(widget -> widget.getShellCommand() != null)
-                .filter(widget -> widget.getShellCommand().stream().anyMatch(s -> s.toLowerCase().contains("Ubuntu".toLowerCase())))
+                .filter(widget -> !isWin() || widget.getShellCommand().stream().anyMatch(s -> s.toLowerCase().contains("Ubuntu".toLowerCase())))
                 .toList();
     }
 
@@ -162,7 +166,7 @@ public class TerminalUtil {
         }
 
         // Entferne das Laufwerkspräfix, z.B. "/mnt/c" -> "/test2/"
-        if (currentWslTerminalDir.startsWith("/mnt/")) {
+        if (isWin() && currentWslTerminalDir.startsWith("/mnt/")) {
             currentWslTerminalDir = currentWslTerminalDir.substring(6); // entfernt "/mnt/c"
             int firstSlash = currentWslTerminalDir.indexOf('/');
             if (firstSlash != -1) {
@@ -179,6 +183,7 @@ public class TerminalUtil {
         }
 
         try {
+            currentWslTerminalDir = currentWslTerminalDir.replaceFirst("^~", System.getProperty("user.home"));
             Path basePath = Paths.get(currentWslTerminalDir);
             // Berechne den relativen Pfad
             String relativePath = basePath.relativize(filePathPath).toString();
@@ -196,6 +201,6 @@ public class TerminalUtil {
      * @return Der konvertierte Pfad
      */
     private static String convertPathToWSLStyle(String path) {
-        return path.replace('\\', '/');
+        return !isWin() ? path : path.replace('\\', '/');
     }
 }

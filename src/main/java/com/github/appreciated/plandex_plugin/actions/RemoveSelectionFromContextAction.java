@@ -37,7 +37,7 @@ public class RemoveSelectionFromContextAction extends AnAction {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
                 sendClear(e.getProject(), modulePath);
-                executeCommandForEachFileInTerminal(e.getProject(), fileList, "pdx rm", commandArgs, modulePath, true);
+                executeCommandForEachFileInTerminal(e.getProject(), fileList, "plandex rm", commandArgs, modulePath, true);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
