@@ -145,7 +145,13 @@ public class TerminalUtil {
             }
         });
         try {
-            Thread.sleep(500);
+            for (int i = 0; i < 50; i++) {
+                Thread.sleep(100);
+                List<ShellTerminalWidget> ubuntuTerminalWidgets = getUbuntuTerminalWidgets(TerminalToolWindowManager.getInstance(project));
+                if(!ubuntuTerminalWidgets.isEmpty()){
+                    break;
+                }
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
