@@ -1,30 +1,22 @@
-package com.github.appreciated.plandex_plugin.actions;
+package com.github.appreciated.plandex_plugin.actions.test;
 
 import com.github.appreciated.plandex_plugin.util.FileUtil;
 import com.intellij.execution.TestStateStorage;
-import com.intellij.execution.testDiscovery.IntellijTestDiscoveryProducer;
 import com.intellij.execution.testframework.JavaTestLocator;
-import com.intellij.execution.testframework.TestTreeView;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerTestTreeView;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
-import com.intellij.execution.ui.layout.impl.RunnerContentUi;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import javax.swing.tree.TreePath;
 import java.io.IOException;
 import java.util.List;
 

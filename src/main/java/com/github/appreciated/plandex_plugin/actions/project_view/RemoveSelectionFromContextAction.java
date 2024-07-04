@@ -1,4 +1,4 @@
-package com.github.appreciated.plandex_plugin.actions;
+package com.github.appreciated.plandex_plugin.actions.project_view;
 
 import com.github.appreciated.plandex_plugin.util.FileUtil;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -16,7 +16,7 @@ import java.util.List;
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.executeCommandForEachFileInTerminal;
 import static com.github.appreciated.plandex_plugin.util.TerminalUtil.sendClear;
 
-public class AddSelectionToContextAction extends AnAction {
+public class RemoveSelectionFromContextAction extends AnAction {
 
     public @NotNull ActionUpdateThread getActionUpdateThread() {
         return ActionUpdateThread.BGT;
@@ -37,7 +37,7 @@ public class AddSelectionToContextAction extends AnAction {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             try {
                 sendClear(e.getProject(), modulePath);
-                executeCommandForEachFileInTerminal(e.getProject(), fileList, "plandex load", commandArgs, modulePath, true);
+                executeCommandForEachFileInTerminal(e.getProject(), fileList, "plandex rm", commandArgs, modulePath, true);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

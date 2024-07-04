@@ -33,12 +33,12 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </group>
         <action id="loadSelectionIntoContext"
-                class="com.github.appreciated.plandex_plugin.actions.AddSelectionToContextAction"
+                class="com.github.appreciated.plandex_plugin.actions.project_view.AddSelectionToContextAction"
                 text="Add selection to context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
         <action id="loadSelectionFromContext"
-                class="com.github.appreciated.plandex_plugin.actions.RemoveSelectionFromContextAction"
+                class="com.github.appreciated.plandex_plugin.actions.project_view.RemoveSelectionFromContextAction"
                 text="Remove selection from context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexActions" anchor="first"/>
         </action>
@@ -47,17 +47,17 @@
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </group>
         <action id="addClassToContext"
-                class="com.github.appreciated.plandex_plugin.actions.AddEditorSelectionToContextAction"
+                class="com.github.appreciated.plandex_plugin.actions.editor.AddEditorSelectionToContextAction"
                 text="Add class to context">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
         <action id="addTestForMethod"
-                class="com.github.appreciated.plandex_plugin.actions.AddTestForMethodAction"
+                class="com.github.appreciated.plandex_plugin.actions.editor.AddTestForMethodAction"
                 text="Add test for this method">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
         <action id="makeChangeToMethod"
-                class="com.github.appreciated.plandex_plugin.actions.MakeChangeToMethodAction"
+                class="com.github.appreciated.plandex_plugin.actions.editor.MakeChangeToMethodAction"
                 text="Make a change to this method">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexEditorActions" anchor="first"/>
         </action>
@@ -66,7 +66,7 @@
             <add-to-group group-id="TestTreePopupMenu" anchor="last"/>
         </group>
         <action id="fixFailingTestAction"
-                class="com.github.appreciated.plandex_plugin.actions.FixFailingTestAction"
+                class="com.github.appreciated.plandex_plugin.actions.test.FixFailingTestAction"
                 text="Fix test"
                 description="Tells plandex to fix the test">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexTestActions" anchor="first"/>
@@ -77,7 +77,7 @@
             <add-to-group group-id="CompilerErrorViewPopupMenu" anchor="last"/>
         </group>
         <action id="fixBuildOutputAction"
-                class="com.github.appreciated.plandex_plugin.actions.FixCompilerErrorAction"
+                class="com.github.appreciated.plandex_plugin.actions.compile.FixCompilerErrorAction"
                 text="Fix compiler errors"
                 description="Tells plandex to fix the build output issue">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexCompilerActions" anchor="after" relative-to-action="Rerun"/>
