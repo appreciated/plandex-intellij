@@ -71,6 +71,17 @@
                 description="Tells plandex to fix the test">
             <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexTestActions" anchor="first"/>
         </action>
+        <!-- Plandex Build Output actions -->
+
+        <group id="com.github.appreciated.plandex_plugin.PlandexCompilerActions" text="Plandex" description="Plandex actions" popup="true">
+            <add-to-group group-id="CompilerErrorViewPopupMenu" anchor="last"/>
+        </group>
+        <action id="fixBuildOutputAction"
+                class="com.github.appreciated.plandex_plugin.actions.FixCompilerErrorAction"
+                text="Fix compiler errors"
+                description="Tells plandex to fix the build output issue">
+            <add-to-group group-id="com.github.appreciated.plandex_plugin.PlandexCompilerActions" anchor="after" relative-to-action="Rerun"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
