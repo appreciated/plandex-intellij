@@ -26,7 +26,7 @@ To use these features, right-click on the desired file, class, or method in the 
 
 To install the Plandex plugin, follow these steps:
 
-1. Download the newest Version from Github Releases
+1. Download the newest Version from GitHub Releases
 2. Open IntelliJ IDEA.
 3. Go to `File` > `Settings` (or `IntelliJ IDEA` > `Preferences` on macOS).
 4. Click on install plugin from disk and select the downloaded zip
@@ -40,14 +40,10 @@ We welcome contributions to the Plandex plugin! If you would like to contribute,
 2. Create a new branch with a descriptive name.
 3. Make your changes and commit them with clear and concise commit messages.
 4. Push your changes to your forked repository.
-5. Create a pull request to the main repository.
+5. Create a pull request for the main repository.
 
 Please ensure that your code adheres to the project's coding standards and includes appropriate tests.
 
 ## License
 
 This project is licensed under the MIT License.
-
-
-
-
