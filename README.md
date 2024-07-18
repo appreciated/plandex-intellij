@@ -20,7 +20,7 @@ To use these features, right-click on the desired file, class, or method in the 
 
 ## Requirements
 
-- A working Plandex CLI installation
+- [A working Plandex CLI installation](https://github.com/plandex-ai/plandex?tab=readme-ov-file#install)
 
 ## Installation
 
