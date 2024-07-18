@@ -26,12 +26,11 @@ To use these features, right-click on the desired file, class, or method in the 
 
 To install the Plandex plugin, follow these steps:
 
-1. Open IntelliJ IDEA.
-2. Go to `File` > `Settings` (or `IntelliJ IDEA` > `Preferences` on macOS).
-3. Select `Plugins` from the left-hand menu.
-4. Click on the `Marketplace` tab and search for `Plandex`.
-5. Click `Install` to install the plugin.
-6. Restart IntelliJ IDEA to activate the plugin.
+1. Download the newest Version from Github Releases
+2. Open IntelliJ IDEA.
+3. Go to `File` > `Settings` (or `IntelliJ IDEA` > `Preferences` on macOS).
+4. Click on install plugin from disk and select the downloaded zip
+![grafik](https://github.com/user-attachments/assets/4e1a57ce-10ba-4d21-9488-0183d43b5cc6)
 
 ## Contributing
 
