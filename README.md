@@ -4,8 +4,6 @@
 
 ## Features
 
-Once the Plandex plugin is installed, you can use it to automate various tasks in your development workflow. Here are some of the key features:
-
 - **Project Explorer**
   - **Add selection to context**: Add selected files or directories to the Plandex context.
   - **Remove selection from context**: Remove selected files or directories from the Plandex context.
@@ -49,7 +47,7 @@ Please ensure that your code adheres to the project's coding standards and inclu
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+This project is licensed under the MIT License.
 
 
 
