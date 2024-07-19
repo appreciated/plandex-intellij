@@ -33,11 +33,12 @@ jobs:
       - name: Build plugin
         run: ./gradlew buildPlugin
 
-      - name: Publish plugin release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          ./gradlew publishPlugin -PpublishToken=${{ secrets.PUBLISH_TOKEN }}
+    # Not yet setup
+    #  - name: Publish plugin release
+    #    env:
+    #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #    run: |
+    #      ./gradlew publishPlugin -PpublishToken=${{ secrets.PUBLISH_TOKEN }}
 
       - name: Upload release assets
         uses: actions/upload-release-asset@v1
