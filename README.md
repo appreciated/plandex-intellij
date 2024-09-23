@@ -1,4 +1,4 @@
-# Plandex Intellij Plugin
+# [Plandex](https://github.com/plandex-ai/plandex) Intellij Plugin
 
 ![alt text](demo.gif)
 
